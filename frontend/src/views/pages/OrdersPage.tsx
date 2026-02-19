@@ -6,9 +6,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiService } from '../../models/api';
 import { IOrder } from '@ligue-sportive/shared';
+import OrderItem from '../components/OrderItem';
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState<IOrder[]>([]);
+  const [orders, setOrders] = useState<Array<IOrder & { _id: string; createdAt: Date }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const OrdersPage = () => {
   if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h1>My Orders</h1>
       
       <div style={{ marginBottom: '20px' }}>
@@ -50,40 +51,8 @@ const OrdersPage = () => {
         </div>
       ) : (
         <div>
-          {orders.map((order: any) => (
-            <div 
-              key={order._id} 
-              style={{ 
-                border: '1px solid #ddd', 
-                padding: '15px', 
-                marginBottom: '15px',
-                borderRadius: '5px'
-              }}
-            >
-              <div style={{ marginBottom: '10px' }}>
-                <strong>Order ID:</strong> {order._id}
-                <br />
-                <strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}
-                <br />
-                <strong>Status:</strong> <span style={{ 
-                  color: order.status === 'PENDING' ? 'orange' : 'green',
-                  fontWeight: 'bold'
-                }}>{order.status}</span>
-                <br />
-                <strong>Total Items:</strong> {order.totalAmount}
-              </div>
-
-              <div>
-                <strong>Items:</strong>
-                <ul>
-                  {order.items.map((item: any, index: number) => (
-                    <li key={index}>
-                      {item.productName} - Quantity: {item.quantity}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+          {orders.map((order) => (
+            <OrderItem key={order._id} order={order} />
           ))}
         </div>
       )}
