@@ -4,12 +4,12 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ApiService } from '../../models/api';
+import { OrderModel } from '../../models/order';
 import { IOrder } from '@ligue-sportive/shared';
 import OrderItem from '../components/OrderItem';
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState<Array<IOrder & { _id: string; createdAt: Date }>>([]);
+  const [orders, setOrders] = useState<IOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -23,10 +23,10 @@ const OrdersPage = () => {
       setLoading(true);
       // TODO: Get userId from AuthContext when auth is implemented
       const userId = 'user123'; // Temporary hardcoded userId
-      const data = await ApiService.getOrders(userId);
+      const data = await OrderModel.getAll(userId);
       setOrders(data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load orders');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load orders');
     } finally {
       setLoading(false);
     }

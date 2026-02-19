@@ -6,7 +6,7 @@
 import { IOrder, OrderStatus } from '@ligue-sportive/shared';
 
 interface OrderItemProps {
-  order: IOrder & { _id: string; createdAt: Date };
+  order: IOrder;
 }
 
 const OrderItem = ({ order }: OrderItemProps) => {
@@ -58,7 +58,7 @@ const OrderItem = ({ order }: OrderItemProps) => {
         </div>
         
         <div style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
-          <strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}
+          <strong>Date:</strong> {order.createdAt ? new Date(order.createdAt).toLocaleString() : '—'}
         </div>
       </div>
 
