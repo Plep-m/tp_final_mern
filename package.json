@@ -1,0 +1,28 @@
+{
+  "name": "ligue-sportive-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "setup": "npm install && npm run build:shared && npm install --workspaces",
+    "build:shared": "npm run build --workspace=shared",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev": "npm run build:shared && concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "install:all": "npm install && npm install --workspaces && npm run build:shared"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "description": "Ligue Sportive d'Auvergne - Equipment Rental Platform (Monorepo)",
+  "keywords": ["mern", "typescript", "mvc", "monorepo"],
+  "author": "Ligue Sportive d'Auvergne Team",
+  "license": "ISC"
+}
