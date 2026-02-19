@@ -31,14 +31,39 @@ export class ApiService {
   }
 
   // Order endpoints
-  static async createOrder(items: any[]): Promise<any> {
-    // TODO: POST /orders
-    throw new Error('Not implemented');
+  // TODO: Refactor to use centralized fetch wrapper when implemented
+  static async createOrder(items: any[], userId: string): Promise<any> {
+    const response = await fetch(`${API_URL}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items, userId }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to create order');
+    return data.data;
   }
 
-  static async getOrders(): Promise<any> {
-    // TODO: GET /orders
-    throw new Error('Not implemented');
+  // TODO: Refactor to use centralized fetch wrapper when implemented
+  static async getOrders(userId?: string): Promise<any> {
+    const query = userId ? `?userId=${userId}` : '';
+    const response = await fetch(`${API_URL}/orders${query}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to fetch orders');
+    return data.data;
+  }
+
+  // TODO: Refactor to use centralized fetch wrapper when implemented
+  static async getOrderById(orderId: string): Promise<any> {
+    const response = await fetch(`${API_URL}/orders/${orderId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || 'Failed to fetch order');
+    return data.data;
   }
 
   // Product endpoints
