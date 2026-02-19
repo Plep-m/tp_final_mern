@@ -4,6 +4,7 @@
  */
 
 import { Request, Response } from 'express';
+import { IOrderItem } from '@ligue-sportive/shared';
 import { Order } from '../models/Order';
 
 export class OrderController {
@@ -23,7 +24,7 @@ export class OrderController {
       // Create order
       const order = await Order.create({
         userId: userId || 'temp-user-id', // TODO: Remove temp userId
-        items: items.map((item: any) => ({
+        items: items.map((item: IOrderItem) => ({
           productId: item.productId,
           productName: item.productName,
           quantity: item.quantity,
@@ -35,10 +36,10 @@ export class OrderController {
         success: true,
         data: order,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
-        error: { message: error.message },
+        error: { message: error instanceof Error ? error.message : 'Internal server error' },
       });
     }
   }
@@ -53,10 +54,10 @@ export class OrderController {
         success: true,
         data: orders,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
-        error: { message: error.message },
+        error: { message: error instanceof Error ? error.message : 'Internal server error' },
       });
     }
   }
@@ -78,10 +79,10 @@ export class OrderController {
         success: true,
         data: order,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       res.status(500).json({
         success: false,
-        error: { message: error.message },
+        error: { message: error instanceof Error ? error.message : 'Internal server error' },
       });
     }
   }

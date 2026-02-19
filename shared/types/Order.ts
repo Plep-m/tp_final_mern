@@ -15,6 +15,7 @@ export interface IOrderItem {
 }
 
 export interface IOrder {
+  _id?: string;
   userId: string;
   items: IOrderItem[];
   totalAmount: number;

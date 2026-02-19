@@ -6,7 +6,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CartService, CartItem as CartItemType } from '../../models/cart';
-import { ApiService } from '../../models/api';
+import { OrderModel } from '../../models/order';
 import CartItem from '../components/CartItem';
 
 const CartPage = () => {
@@ -56,7 +56,7 @@ const CartPage = () => {
       // TODO: Get userId from AuthContext when auth is implemented
       const userId = 'user123'; // Temporary hardcoded userId
 
-      await ApiService.createOrder(cart, userId);
+      await OrderModel.create(cart, userId);
       
       // Clear cart after successful order
       CartService.clearCart();
@@ -64,8 +64,8 @@ const CartPage = () => {
       
       alert('Order created successfully!');
       navigate('/orders');
-    } catch (error: any) {
-      alert('Failed to create order: ' + error.message);
+    } catch (error: unknown) {
+      alert('Failed to create order: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
       setLoading(false);
     }
