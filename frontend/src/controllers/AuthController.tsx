@@ -1,9 +1,10 @@
 /**
  * Auth Controller - Authentication Context
  * TODO: Implement auth state management with React Context
+ * TEMPORARY: Bypass provider to allow routing without auth
  */
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 
 interface AuthContextType {
   user: any | null;
@@ -16,25 +17,20 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // TODO: Implement:
-  // - User state
-  // - Token management (localStorage)
-  // - Login function
-  // - Logout function
-  // - isAdmin check
-
-  return (
-    <AuthContext.Provider value={null as any}>
-      <div>Auth Provider - TODO: Implement</div>
-      {children}
-    </AuthContext.Provider>
-  );
+  // TODO: Implement full auth logic when needed
+  // For now, just render children without auth state
+  
+  return <>{children}</>;
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
+  // TODO: Return actual context when auth is implemented
+  // For now, return dummy values to avoid errors
+  return {
+    user: null,
+    token: null,
+    login: async () => {},
+    logout: () => {},
+    isAdmin: () => false,
+  };
 };
