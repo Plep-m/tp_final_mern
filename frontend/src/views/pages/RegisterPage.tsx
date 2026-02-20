@@ -11,106 +11,97 @@ const RegisterPage = () => {
   const { register } = useAuth();
 
   const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [lastName, setLastName]   = useState('');
+  const [email, setEmail]         = useState('');
+  const [password, setPassword]   = useState('');
+  const [error, setError]         = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
     try {
-      await register({
-        firstName,
-        lastName,
-        email,
-        password,
-      });
+      await register({ firstName, lastName, email, password });
       navigate('/products');
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Échec de l'inscription");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1>Register</h1>
-
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="firstName">First Name:</label>
-          <input
-            id="firstName"
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <div className="auth-logo-title">🏅 Ligue Sportive</div>
+          <div className="auth-logo-sub">Créez votre compte</div>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="lastName">Last Name:</label>
-          <input
-            id="lastName"
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
+        {error && <div className="alert alert-error">{error}</div>}
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="email">Email:</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="form-group">
+              <label className="form-label" htmlFor="firstName">Prénom</label>
+              <input
+                className="form-control"
+                id="firstName"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                autoFocus
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="lastName">Nom</label>
+              <input
+                className="form-control"
+                id="lastName"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password">Password:</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">Email</label>
+            <input
+              className="form-control"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            cursor: isLoading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {isLoading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Mot de passe</label>
+            <input
+              className="form-control"
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
+          <button className="btn btn-success btn-block btn-lg" type="submit" disabled={isLoading}>
+            {isLoading ? 'Inscription...' : 'Créer mon compte'}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Déjà un compte ?{' '}
+          <Link to="/login">Se connecter</Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 /**
- * Orders Page - User Order History
+ * Orders Page
  */
 
 import { useState, useEffect } from 'react';
@@ -14,9 +14,7 @@ const OrdersPage = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadOrders();
-  }, []);
+  useEffect(() => { loadOrders(); }, []);
 
   const loadOrders = async () => {
     try {
@@ -24,32 +22,33 @@ const OrdersPage = () => {
       const data = await OrderModel.getAll();
       setOrders(data);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to load orders');
+      setError(err instanceof Error ? err.message : 'Erreur de chargement');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading orders...</div>;
-  if (error) return <div style={{ padding: '20px', color: 'red' }}>Error: {error}</div>;
+  if (loading) return <div className="loading-state">Chargement des commandes...</div>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>My Orders</h1>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={() => navigate('/products')}>Back to Products</button>
-        <button onClick={() => navigate('/cart')} style={{ marginLeft: '10px' }}>View Cart</button>
+    <div className="page">
+      <div className="page-header">
+        <h1 className="page-title">📦 Mes commandes</h1>
       </div>
 
+      {error && <div className="alert alert-error">{error}</div>}
+
       {orders.length === 0 ? (
-        <div>
-          <p>No orders yet.</p>
-          <button onClick={() => navigate('/products')}>Start Shopping</button>
+        <div className="empty-state">
+          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-text">Aucune commande pour l'instant</div>
+          <button className="btn btn-primary" onClick={() => navigate('/products')}>
+            Commencer mes achats
+          </button>
         </div>
       ) : (
         <div>
-          {orders.map((order) => (
+          {orders.map(order => (
             <OrderItem key={order._id} order={order} />
           ))}
         </div>

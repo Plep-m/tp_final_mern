@@ -19,67 +19,62 @@ const LoginPage = () => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
-
     try {
       await login(email, password);
       navigate('/products');
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Échec de la connexion');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
-      <h1>Login</h1>
-
-      {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="email">Email:</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <div className="auth-logo-title">🏅 Ligue Sportive</div>
+          <div className="auth-logo-sub">Connectez-vous à votre compte</div>
         </div>
 
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password">Password:</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-          />
-        </div>
+        {error && <div className="alert alert-error">{error}</div>}
 
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            cursor: isLoading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">Email</label>
+            <input
+              className="form-control"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
-        Don't have an account? <Link to="/register">Register here</Link>
-      </p>
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Mot de passe</label>
+            <input
+              className="form-control"
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button className="btn btn-primary btn-block btn-lg" type="submit" disabled={isLoading}>
+            {isLoading ? 'Connexion...' : 'Se connecter'}
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Pas encore de compte ?{' '}
+          <Link to="/register">S'inscrire</Link>
+        </p>
+      </div>
     </div>
   );
 };

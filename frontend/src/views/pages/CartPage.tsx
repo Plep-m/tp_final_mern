@@ -1,5 +1,5 @@
 /**
- * Cart Page - Shopping Cart with Checkout
+ * Cart Page
  */
 
 import { useState, useEffect } from 'react';
@@ -13,13 +13,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    loadCart();
-  }, []);
-
-  const loadCart = () => {
-    setCart(CartService.getCart());
-  };
+  useEffect(() => { setCart(CartService.getCart()); }, []);
 
   const handleUpdateQuantity = (productId: string, quantity: number) => {
     CartService.updateQuantity(productId, quantity);
@@ -32,23 +26,15 @@ const CartPage = () => {
   };
 
   const handleCheckout = async () => {
-    if (cart.length === 0) {
-      alert('Cart is empty');
-      return;
-    }
-
+    if (cart.length === 0) return;
     try {
       setLoading(true);
       await OrderModel.create(cart);
-      
-      // Clear cart after successful order
       CartService.clearCart();
       setCart([]);
-      
-      alert('Order created successfully!');
       navigate('/orders');
     } catch (error: unknown) {
-      alert('Failed to create order: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      alert(error instanceof Error ? error.message : 'Erreur lors de la commande');
     } finally {
       setLoading(false);
     }
@@ -57,58 +43,46 @@ const CartPage = () => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Shopping Cart</h1>
-
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={() => navigate('/products')}>Continue Shopping</button>
-        <button onClick={() => navigate('/orders')} style={{ marginLeft: '10px' }}>My Orders</button>
+    <div className="page">
+      <div className="page-header">
+        <h1 className="page-title">🛒 Mon panier</h1>
       </div>
 
       {cart.length === 0 ? (
-        <div>
-          <p>Your cart is empty.</p>
-          <button onClick={() => navigate('/products')}>Start Shopping</button>
+        <div className="empty-state">
+          <div className="empty-state-icon">🛒</div>
+          <div className="empty-state-text">Votre panier est vide</div>
+          <button className="btn btn-primary" onClick={() => navigate('/products')}>
+            Continuer mes achats
+          </button>
         </div>
       ) : (
-        <div>
-          {cart.map((item) => (
-            <CartItem
-              key={item.productId}
-              item={item}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemove={handleRemove}
-            />
-          ))}
+        <>
+          <div>
+            {cart.map(item => (
+              <CartItem
+                key={item.productId}
+                item={item}
+                onUpdateQuantity={handleUpdateQuantity}
+                onRemove={handleRemove}
+              />
+            ))}
+          </div>
 
-          <div style={{ 
-            marginTop: '20px', 
-            padding: '20px', 
-            background: '#f8f9fa',
-            borderRadius: '8px'
-          }}>
-            <h3>Cart Summary</h3>
-            <p style={{ fontSize: '18px' }}>
-              <strong>Total Items:</strong> {totalItems}
-            </p>
-            <button 
+          <div className="cart-summary">
+            <div>
+              <span className="text-muted">Total articles : </span>
+              <span className="cart-summary-total">{totalItems}</span>
+            </div>
+            <button
+              className="btn btn-success btn-lg"
               onClick={handleCheckout}
               disabled={loading}
-              style={{ 
-                padding: '12px 30px',
-                fontSize: '16px',
-                background: loading ? '#ccc' : '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                fontWeight: 'bold'
-              }}
             >
-              {loading ? 'Processing...' : 'Checkout'}
+              {loading ? 'Traitement...' : 'Commander'}
             </button>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
