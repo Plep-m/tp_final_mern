@@ -8,7 +8,7 @@
     ".": {
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
-      "import": "./dist/index.js"
+      "import": "./dist/esm/index.js"
     }
   },
   "files": [
@@ -16,7 +16,7 @@
     "types"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc -p tsconfig.esm.json",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {

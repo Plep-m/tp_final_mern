@@ -1,6 +1,7 @@
 /**
  * Protected Route Component
- * TODO: Implement route protection with authentication check
+ * TODO: Restore auth checks when AuthController is implemented
+ * TEMPORARY: Bypassing auth for development testing
  */
 
 import { Navigate } from 'react-router-dom';
@@ -12,13 +13,13 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
-  // TODO: Implement:
-  // - Check if user is authenticated
-  // - Check if admin role required
-  // - Redirect to /login if not authenticated
-  // - Redirect to /products if not admin
+  // TODO: Restore authentication check when AuthController is ready
+  // const { user, isAdmin } = useAuth();
+  // if (!user) return <Navigate to="/login" replace />;
+  // if (adminOnly && !isAdmin()) return <Navigate to="/products" replace />;
 
-  return <div>Protected Route - TODO: Implement</div>;
+  // TEMPORARY: Skip all auth checks for development
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;
