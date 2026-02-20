@@ -1,7 +1,5 @@
 /**
  * Protected Route Component
- * TODO: Restore auth checks when AuthController is implemented
- * TEMPORARY: Bypassing auth for development testing
  */
 
 import { Navigate } from 'react-router-dom';
@@ -13,12 +11,24 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) => {
-  // TODO: Restore authentication check when AuthController is ready
-  // const { user, isAdmin } = useAuth();
-  // if (!user) return <Navigate to="/login" replace />;
-  // if (adminOnly && !isAdmin()) return <Navigate to="/products" replace />;
+  const { token, user, isAdmin, isLoading } = useAuth();
 
-  // TEMPORARY: Skip all auth checks for development
+  // Show loading state while auth is initializing
+  if (isLoading) {
+    return <div style={{ padding: '20px' }}>Loading...</div>;
+  }
+
+  // Check if user is authenticated
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  // Check if admin role required
+  if (adminOnly && !isAdmin()) {
+    return <Navigate to="/products" replace />;
+  }
+
+  // User is authorized
   return <>{children}</>;
 };
 
