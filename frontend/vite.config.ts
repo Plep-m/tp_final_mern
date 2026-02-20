@@ -12,6 +12,9 @@ export default defineConfig({
       '@infrastructure': path.resolve(__dirname, './src/infrastructure'),
     },
   },
+  optimizeDeps: {
+    include: ['@ligue-sportive/shared'],
+  },
   server: {
     port: 3000,
     proxy: {
