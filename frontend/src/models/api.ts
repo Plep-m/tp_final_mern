@@ -1,33 +1,79 @@
 /**
  * API Service - HTTP Client
  * Handles all API calls to backend
- * TODO: Implement fetch wrapper with auth token injection
  */
 import { IProduct, IOrderItem, IOrder } from "@ligue-sportive/shared";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:5000/api';
 
 export class ApiService {
-  // TODO: Implement fetch wrapper with:
-  // - Auth token from localStorage
-  // - Error handling
-  // - JSON parsing
-  
-  // Auth endpoints
-  static async login(email: string, password: string): Promise<unknown> {
-    // TODO: POST /auth/login
-    throw new Error('Not implemented');
+  private getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
   }
 
-  static async register(data: unknown): Promise<unknown> {
-    // TODO: POST /auth/register
-    throw new Error('Not implemented');
+  private async request<T>(
+    method: string,
+    endpoint: string,
+    body?: any
+  ): Promise<T> {
+    const url = `${API_URL}${endpoint}`;
+    const options: RequestInit = {
+      method,
+      headers: this.getHeaders(),
+    };
+
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'API request failed');
+    }
+
+    return response.json();
+  }
+
+  // Auth endpoints
+  async login(email: string, password: string): Promise<any> {
+    return this.request('POST', '/auth/login', { email, password });
+  }
+
+  async register(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<any> {
+    return this.request('POST', '/auth/register', data);
   }
 
   // User endpoints (Admin only)
-  static async getUsers(): Promise<unknown> {
-    // TODO: GET /users
-    throw new Error('Not implemented');
+  async getUsers(): Promise<any> {
+    return this.request('GET', '/users');
+  }
+
+  async getUserById(id: string): Promise<any> {
+    return this.request('GET', `/users/${id}`);
+  }
+
+  async updateUser(id: string, data: any): Promise<any> {
+    return this.request('PUT', `/users/${id}`, data);
+  }
+
+  async deleteUser(id: string): Promise<any> {
+    return this.request('DELETE', `/users/${id}`);
   }
 
   // Order endpoints

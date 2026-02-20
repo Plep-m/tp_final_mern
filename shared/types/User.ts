@@ -1,12 +1,32 @@
 /**
  * Shared Types - User
- * TODO: Define user-related types and enums
  */
 
-// TODO: Define UserRole enum (MEMBER, ADMIN)
+export enum UserRole {
+  MEMBER = 'MEMBER',
+  ADMIN = 'ADMIN',
+}
 
-// TODO: Define IUser interface
+export interface IUser {
+  _id?: string;
+  email: string;
+  password?: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-// TODO: Define IUserResponse interface (for API responses)
+export interface IUserResponse {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: UserRole;
+}
 
-// TODO: Define IAuthResponse interface (user + token)
+export interface IAuthResponse {
+  user: IUserResponse;
+  token: string;
+}

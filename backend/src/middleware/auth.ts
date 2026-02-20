@@ -1,20 +1,54 @@
 /**
  * Auth Middleware
- * TODO: Implement JWT verification when Auth is ready
- * TEMPORARY: Skipping auth for development
+ * Verifies JWT token and attaches user to request
  */
 
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { UserRole } from '@ligue-sportive/shared';
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  // TODO: Implement JWT token verification
-  // For now, skip auth to allow Order routes to work
-  (req as any).user = { userId: 'temp-user-id', role: 'MEMBER' };
-  next();
+// Extend Express Request to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        _id: string;
+        email: string;
+        role: UserRole;
+      };
+    }
+  }
+}
+
+export const authMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      res.status(401).json({ error: 'No token provided' });
+      return;
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    req.user = decoded as any;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
 };
 
-export const adminMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  // TODO: Implement admin check
-  // For now, skip check
+export const adminMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  if (!req.user || req.user.role !== UserRole.ADMIN) {
+    res.status(403).json({ error: 'Admin access required' });
+    return;
+  }
   next();
 };
