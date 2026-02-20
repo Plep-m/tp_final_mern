@@ -5,7 +5,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { IOrder, OrderStatus } from '@ligue-sportive/shared';
 
-export interface IOrderDocument extends IOrder, Document {}
+export interface IOrderDocument extends Omit<IOrder, '_id'>, Document {}
 
 const OrderSchema = new Schema<IOrderDocument>({
   userId: { type: String, required: true },

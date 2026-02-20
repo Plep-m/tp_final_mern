@@ -5,27 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProductModel, Product, ProductCategory } from '../../models/Product';
-
-// TODO: Replace with CartService.addToCart() when CartService is implemented
-const addToFakeCart = (product: Product) => {
-  try {
-    const CART_KEY = 'ligue_cart';
-    const raw = localStorage.getItem(CART_KEY);
-    const cart: { productId: string; productName: string; quantity: number }[] = raw
-      ? JSON.parse(raw)
-      : [];
-    const existing = cart.find(i => i.productId === product._id);
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cart.push({ productId: product._id, productName: product.name, quantity: 1 });
-    }
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  } catch (error) {
-    console.error('Error adding to cart:', error);
-    throw new Error('Failed to add item to cart');
-  }
-};
+import { CartService } from '../../models/cart';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -54,7 +34,7 @@ const ProductsPage = () => {
 
   const handleAddToCart = (product: Product) => {
     try {
-      addToFakeCart(product);
+      CartService.addToCart({ productId: product._id, productName: product.name, quantity: 1 });
       setAddedId(product._id);
       setTimeout(() => setAddedId(null), 1500);
     } catch (err: unknown) {

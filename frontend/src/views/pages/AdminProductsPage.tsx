@@ -1,6 +1,5 @@
 /**
  * Admin Products Page
- * TODO: Implement product management (Admin only)
  */
 
 import { useEffect, useState } from "react";

@@ -1,6 +1,5 @@
 /**
  * Cart Page - Shopping Cart with Checkout
- * TODO: Remove dummy data when ProductsPage is ready to add items
  */
 
 import { useState, useEffect } from 'react';
@@ -19,20 +18,7 @@ const CartPage = () => {
   }, []);
 
   const loadCart = () => {
-    const cartItems = CartService.getCart();
-    
-    // TODO: Remove this dummy data when ProductsPage allows adding items
-    if (cartItems.length === 0) {
-      // Add dummy items for testing
-      const dummyItems: CartItemType[] = [
-        { productId: 'dummy1', productName: 'Football Ball (DUMMY)', quantity: 2 },
-        { productId: 'dummy2', productName: 'Swimming Goggles (DUMMY)', quantity: 1 },
-      ];
-      dummyItems.forEach(item => CartService.addToCart(item));
-      setCart(dummyItems);
-    } else {
-      setCart(cartItems);
-    }
+    setCart(CartService.getCart());
   };
 
   const handleUpdateQuantity = (productId: string, quantity: number) => {
@@ -80,17 +66,6 @@ const CartPage = () => {
       <div style={{ marginBottom: '20px' }}>
         <button onClick={() => navigate('/products')}>Continue Shopping</button>
         <button onClick={() => navigate('/orders')} style={{ marginLeft: '10px' }}>My Orders</button>
-      </div>
-
-      {/* TODO: Remove this warning when ProductsPage is ready */}
-      <div style={{ 
-        background: '#fff3cd', 
-        padding: '10px', 
-        marginBottom: '20px',
-        border: '1px solid #ffc107',
-        borderRadius: '5px'
-      }}>
-        ⚠️ <strong>TODO:</strong> Dummy data shown. Remove when ProductsPage allows adding items.
       </div>
 
       {cart.length === 0 ? (

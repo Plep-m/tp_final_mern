@@ -1,9 +1,8 @@
 /**
  * Shared Types - Product
- * TODO: Define product-related types and enums
  */
 
-// TODO: Define ProductCategory enum (FOOTBALL, NATATION, etc.)
+
 export enum ProductCategory{
     FOOTBALL = "Football",
     NATATION = "Natation",
@@ -12,7 +11,7 @@ export enum ProductCategory{
     RUGBY = "Rugby",
     HANDBALL = "Handball"
 }
-// TODO: Define IProduct interface
+
 export interface IProduct {
   name: string;
   description?: string;
