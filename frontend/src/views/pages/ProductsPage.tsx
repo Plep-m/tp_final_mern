@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ProductModel, Product, ProductCategory } from '../../models/Product';
 import { CartService } from '../../models/cart';
+import { useAuth } from '../../controllers/AuthController';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,6 +15,7 @@ const ProductsPage = () => {
   const [error, setError] = useState('');
   const [addedId, setAddedId] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     loadProducts();
@@ -50,9 +52,11 @@ const ProductsPage = () => {
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={() => navigate('/cart')}>🛒 Panier</button>
           <button onClick={() => navigate('/orders')}>📦 Mes commandes</button>
-          <button onClick={() => navigate('/admin/products')} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer' }}>
-            ⚙️ Admin produits
-          </button>
+          {isAdmin() && (
+            <button onClick={() => navigate('/admin/products')} style={{ background: '#6c757d', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '4px', cursor: 'pointer' }}>
+              ⚙️ Admin produits
+            </button>
+          )}
         </div>
       </div>
 

@@ -7,12 +7,12 @@ import { IOrder, IOrderItem } from '@ligue-sportive/shared';
 import { ApiService } from './api';
 
 export class OrderModel {
-  static async create(items: IOrderItem[], userId: string): Promise<IOrder> {
-    return ApiService.createOrder(items, userId);
+  static async create(items: IOrderItem[]): Promise<IOrder> {
+    return ApiService.createOrder(items);
   }
 
-  static async getAll(userId?: string): Promise<IOrder[]> {
-    return ApiService.getOrders(userId);
+  static async getAll(): Promise<IOrder[]> {
+    return ApiService.getOrders();
   }
 
   static async getById(orderId: string): Promise<IOrder> {

@@ -39,10 +39,7 @@ const CartPage = () => {
 
     try {
       setLoading(true);
-      // TODO: Get userId from AuthContext when auth is implemented
-      const userId = 'user123'; // Temporary hardcoded userId
-
-      await OrderModel.create(cart, userId);
+      await OrderModel.create(cart);
       
       // Clear cart after successful order
       CartService.clearCart();

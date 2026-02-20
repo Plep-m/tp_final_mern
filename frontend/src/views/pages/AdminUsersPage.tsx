@@ -5,13 +5,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../controllers/AuthController';
 import { ApiService } from '../../models/api';
-import type { IUserResponse } from '@ligue-sportive/shared';
+import type { IUserResponse, UserRole } from '@ligue-sportive/shared';
 
 interface EditingUser {
   _id: string;
   firstName: string;
   lastName: string;
-  role: string;
+  role: UserRole;
 }
 
 const AdminUsersPage = () => {
@@ -40,8 +40,8 @@ const AdminUsersPage = () => {
       setError('');
       const response = await ApiService.getUsers();
       setUsers(response);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch users');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch users');
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +53,7 @@ const AdminUsersPage = () => {
       _id: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
-      role: user.role as 'MEMBER' | 'ADMIN',
+      role: user.role,
     });
   };
 
@@ -79,8 +79,8 @@ const AdminUsersPage = () => {
 
       setEditingId(null);
       setEditingData(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to update user');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to update user');
     }
   };
 
@@ -90,8 +90,8 @@ const AdminUsersPage = () => {
       await ApiService.deleteUser(userId);
       setUsers(users.filter((u) => u._id !== userId));
       setDeleteConfirm(null);
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete user');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to delete user');
     }
   };
 
@@ -187,7 +187,7 @@ const AdminUsersPage = () => {
                       onChange={(e) =>
                         setEditingData({
                           ...editingData!,
-                          role: e.target.value as 'MEMBER' | 'ADMIN',
+                          role: e.target.value as UserRole,
                         })
                       }
                       style={{ width: '100%', padding: '4px' }}

@@ -33,8 +33,12 @@ export const authMiddleware = (
       return;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-    req.user = decoded as any;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as {
+      _id: string;
+      email: string;
+      role: UserRole;
+    };
+    req.user = decoded;
     next();
   } catch (error) {
     res.status(401).json({ error: 'Invalid token' });

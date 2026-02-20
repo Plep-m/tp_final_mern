@@ -21,9 +21,7 @@ const OrdersPage = () => {
   const loadOrders = async () => {
     try {
       setLoading(true);
-      // TODO: Get userId from AuthContext when auth is implemented
-      const userId = 'user123'; // Temporary hardcoded userId
-      const data = await OrderModel.getAll(userId);
+      const data = await OrderModel.getAll();
       setOrders(data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to load orders');

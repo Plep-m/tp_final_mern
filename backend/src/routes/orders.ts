@@ -4,13 +4,12 @@
 
 import { Router } from 'express';
 import { OrderController } from '../controllers/OrderController';
+import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 
-// Temporarily remove auth middleware for testing
-// TODO: Add authMiddleware when Auth is implemented
-router.post('/', OrderController.createOrder);
-router.get('/', OrderController.getUserOrders);
-router.get('/:id', OrderController.getOrderById);
+router.post('/', authMiddleware, OrderController.createOrder);
+router.get('/', authMiddleware, OrderController.getUserOrders);
+router.get('/:id', authMiddleware, OrderController.getOrderById);
 
 export default router;
