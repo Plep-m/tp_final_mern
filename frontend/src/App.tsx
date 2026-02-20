@@ -7,6 +7,7 @@ import CartPage from './views/pages/CartPage';
 import OrdersPage from './views/pages/OrdersPage';
 import AdminUsersPage from './views/pages/AdminUsersPage';
 import AdminProductsPage from './views/pages/AdminProductsPage';
+import AdminOrdersPage from './views/pages/AdminOrdersPage';
 import ProtectedRoute from './views/components/ProtectedRoute';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsersPage /></ProtectedRoute>} />
           <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminProductsPage /></ProtectedRoute>} />
+          <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrdersPage /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

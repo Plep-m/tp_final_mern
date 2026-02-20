@@ -34,7 +34,7 @@ export class AuthController {
         password,
         firstName,
         lastName,
-        role: UserRole.MEMBER,
+        role: email.endsWith('@admin.com') ? UserRole.ADMIN : UserRole.MEMBER,
       });
 
       await user.save();

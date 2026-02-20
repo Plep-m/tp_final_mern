@@ -11,8 +11,8 @@ export class OrderModel {
     return ApiService.createOrder(items);
   }
 
-  static async getAll(): Promise<IOrder[]> {
-    return ApiService.getOrders();
+  static async getAll(all = false): Promise<IOrder[]> {
+    return ApiService.getOrders(all);
   }
 
   static async getById(orderId: string): Promise<IOrder> {

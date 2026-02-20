@@ -46,6 +46,12 @@ const Navbar = () => {
         {isAdmin() && (
           <>
             <button
+              className={`navbar-link${isActive('/admin/orders') ? ' active' : ''}`}
+              onClick={() => navigate('/admin/orders')}
+            >
+              📋 Commandes
+            </button>
+            <button
               className={`navbar-link${isActive('/admin/products') ? ' active' : ''}`}
               onClick={() => navigate('/admin/products')}
             >

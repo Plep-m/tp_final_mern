@@ -82,8 +82,14 @@ export class ApiService {
     return data.data;
   }
 
-  static async getOrders(): Promise<IOrder[]> {
-    const data = await ApiService.request<{ data: IOrder[] }>('GET', '/orders');
+  static async getOrders(all = false): Promise<IOrder[]> {
+    const query = all ? '?all=true' : '';
+    const data = await ApiService.request<{ data: IOrder[] }>('GET', `/orders${query}`);
+    return data.data;
+  }
+
+  static async updateOrderStatus(orderId: string, status: string): Promise<IOrder> {
+    const data = await ApiService.request<{ data: IOrder }>('PATCH', `/orders/${orderId}/status`, { status });
     return data.data;
   }
 
