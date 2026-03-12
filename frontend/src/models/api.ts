@@ -1,97 +1,126 @@
 /**
  * API Service - HTTP Client
  * Handles all API calls to backend
- * TODO: Implement fetch wrapper with auth token injection
  */
-import { IProduct } from "@ligue-sportive/shared";
+import { IProduct, IOrderItem, IOrder, IUserResponse, IAuthResponse } from "@ligue-sportive/shared";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta as any).env.VITE_API_URL || 'http://localhost:5000/api';
 
 export class ApiService {
-  // TODO: Implement fetch wrapper with:
-  // - Auth token from localStorage
-  // - Error handling
-  // - JSON parsing
-  
-  // Auth endpoints
-  static async login(email: string, password: string): Promise<any> {
-    // TODO: POST /auth/login
-    throw new Error('Not implemented');
+  private static getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    };
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
   }
 
-  static async register(data: any): Promise<any> {
-    // TODO: POST /auth/register
-    throw new Error('Not implemented');
+  private static async request<T>(
+    method: string,
+    endpoint: string,
+    body?: unknown
+  ): Promise<T> {
+    const url = `${API_URL}${endpoint}`;
+    const options: RequestInit = {
+      method,
+      headers: ApiService.getHeaders(),
+    };
+
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'API request failed');
+    }
+
+    return response.json();
+  }
+
+  // Auth endpoints
+  static async login(email: string, password: string): Promise<IAuthResponse> {
+    return ApiService.request<IAuthResponse>('POST', '/auth/login', { email, password });
+  }
+
+  static async register(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  }): Promise<IAuthResponse> {
+    return ApiService.request<IAuthResponse>('POST', '/auth/register', data);
   }
 
   // User endpoints (Admin only)
-  static async getUsers(): Promise<any> {
-    // TODO: GET /users
-    throw new Error('Not implemented');
+  static async getUsers(): Promise<IUserResponse[]> {
+    return ApiService.request<IUserResponse[]>('GET', '/users');
+  }
+
+  static async getUserById(id: string): Promise<IUserResponse> {
+    return ApiService.request<IUserResponse>('GET', `/users/${id}`);
+  }
+
+  static async updateUser(id: string, data: Partial<Pick<IUserResponse, 'firstName' | 'lastName' | 'role'>>): Promise<IUserResponse> {
+    return ApiService.request<IUserResponse>('PUT', `/users/${id}`, data);
+  }
+
+  static async deleteUser(id: string): Promise<void> {
+    await ApiService.request('DELETE', `/users/${id}`);
   }
 
   // Order endpoints
-  static async createOrder(items: any[]): Promise<any> {
-    // TODO: POST /orders
-    throw new Error('Not implemented');
+  static async createOrder(items: IOrderItem[]): Promise<IOrder> {
+    const data = await ApiService.request<{ data: IOrder }>('POST', '/orders', { items });
+    return data.data;
   }
 
-  static async getOrders(): Promise<any> {
-    // TODO: GET /orders
-    throw new Error('Not implemented');
+  static async getOrders(all = false): Promise<IOrder[]> {
+    const query = all ? '?all=true' : '';
+    const data = await ApiService.request<{ data: IOrder[] }>('GET', `/orders${query}`);
+    return data.data;
+  }
+
+  static async updateOrderStatus(orderId: string, status: string): Promise<IOrder> {
+    const data = await ApiService.request<{ data: IOrder }>('PATCH', `/orders/${orderId}/status`, { status });
+    return data.data;
+  }
+
+  static async getOrderById(orderId: string): Promise<IOrder> {
+    const data = await ApiService.request<{ data: IOrder }>('GET', `/orders/${orderId}`);
+    return data.data;
   }
 
   // Product endpoints
-  // TODO: Refactor to use centralized fetch wrapper when implemented
   static async getProducts(category?: string): Promise<IProduct[]> {
     const query = category ? `?category=${encodeURIComponent(category)}` : '';
-    const response = await fetch(`${API_URL}/products${query}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.error?.message || 'Failed to fetch products');
-    return data.data as IProduct[];
+    const data = await ApiService.request<{ data: IProduct[] }>('GET', `/products${query}`);
+    return data.data;
   }
 
   static async getProductById(id: string): Promise<IProduct> {
-    const response = await fetch(`${API_URL}/products/${id}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.error?.message || 'Failed to fetch product');
-    return data.data as IProduct;
+    const data = await ApiService.request<{ data: IProduct }>('GET', `/products/${id}`);
+    return data.data;
   }
 
   static async createProduct(product: IProduct): Promise<IProduct> {
-    const response = await fetch(`${API_URL}/products`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(product),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.error?.message || 'Failed to create product');
-    return data.data as IProduct;
+    const data = await ApiService.request<{ data: IProduct }>('POST', '/products', product);
+    return data.data;
   }
 
   static async updateProduct(id: string, product: IProduct): Promise<IProduct> {
-    const response = await fetch(`${API_URL}/products/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(product),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.error?.message || 'Failed to update product');
-    return data.data as IProduct;
+    const data = await ApiService.request<{ data: IProduct }>('PUT', `/products/${id}`, product);
+    return data.data;
   }
 
   static async deleteProduct(id: string): Promise<void> {
-    const response = await fetch(`${API_URL}/products/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data?.error?.message || 'Failed to delete product');
+    await ApiService.request('DELETE', `/products/${id}`);
   }
 }

@@ -1,10 +1,24 @@
 /**
  * Shared Types - Order
- * TODO: Define order-related types and enums
  */
 
-// TODO: Define OrderStatus enum (PENDING, CONFIRMED, CANCELLED)
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  CANCELLED = 'CANCELLED',
+}
 
-// TODO: Define IOrderItem interface (productId, productName, quantity)
+export interface IOrderItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+}
 
-// TODO: Define IOrder interface
+export interface IOrder {
+  _id?: string;
+  userId: string;
+  items: IOrderItem[];
+  totalAmount: number;
+  status: OrderStatus;
+  createdAt?: Date;
+}

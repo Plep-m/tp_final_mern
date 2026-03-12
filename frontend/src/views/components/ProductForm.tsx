@@ -1,32 +1,36 @@
-import { useEffect, useState } from "react";
-import { Product, ProductCategory } from "../../models/Product";
+/**
+ * ProductForm Component
+ */
+
+import { useEffect, useState } from 'react';
+import { Product, ProductCategory } from '../../models/Product';
 
 interface Props {
   product: Product | null;
-  onSubmit: (data: Omit<Product, "_id">, id?: string) => void;
+  onSubmit: (data: Omit<Product, '_id'>, id?: string) => void;
   onCancel: () => void;
 }
 
 const ProductForm = ({ product, onSubmit, onCancel }: Props) => {
-  const [form, setForm] = useState<Omit<Product, "_id">>({
-    name: "",
-    description: "",
+  const [form, setForm] = useState<Omit<Product, '_id'>>({
+    name: '',
+    description: '',
     category: ProductCategory.FOOTBALL,
     stock: 0,
-    imageUrl: ""
+    imageUrl: '',
   });
 
   useEffect(() => {
     if (product) {
       const { _id, ...rest } = product;
       setForm(rest);
+    } else {
+      setForm({ name: '', description: '', category: ProductCategory.FOOTBALL, stock: 0, imageUrl: '' });
     }
   }, [product]);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.name === 'stock' ? Number(e.target.value) : e.target.value });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -36,50 +40,49 @@ const ProductForm = ({ product, onSubmit, onCancel }: Props) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>{product ? "Modifier un produit" : "Ajouter un produit"}</h3>
+      <h3 style={{ marginBottom: '16px', fontSize: '16px', fontWeight: 600 }}>
+        {product ? 'Modifier le produit' : 'Ajouter un produit'}
+      </h3>
 
-      <input name="name" placeholder="Nom" value={form.name} onChange={handleChange} required />
+      <div className="form-group">
+        <label className="form-label">Nom</label>
+        <input className="form-control" name="name" value={form.name} onChange={handleChange} required />
+      </div>
 
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={form.description}
-        onChange={handleChange}
-      />
+      <div className="form-group">
+        <label className="form-label">Description</label>
+        <textarea className="form-control" name="description" value={form.description} onChange={handleChange} />
+      </div>
 
-      <select name="category" value={form.category} onChange={handleChange}>
-        {Object.values(ProductCategory).map((cat) => (
-          <option key={cat} value={cat}>
-            {cat}
-          </option>
-        ))}
-      </select>
+      <div className="form-group">
+        <label className="form-label">Catégorie</label>
+        <select className="form-control" name="category" value={form.category} onChange={handleChange}>
+          {Object.values(ProductCategory).map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
 
-      <input
-        type="number"
-        name="stock"
-        value={form.stock}
-        onChange={handleChange}
-        placeholder="Stock"
-        required
-      />
+      <div className="form-group">
+        <label className="form-label">Stock</label>
+        <input className="form-control" type="number" name="stock" value={form.stock} onChange={handleChange} required min={0} />
+      </div>
 
-      <input
-        name="imageUrl"
-        placeholder="Image URL"
-        value={form.imageUrl}
-        onChange={handleChange}
-      />
+      <div className="form-group">
+        <label className="form-label">URL de l'image</label>
+        <input className="form-control" name="imageUrl" value={form.imageUrl} onChange={handleChange} />
+      </div>
 
-      <button type="submit">
-        {product ? "Modifier" : "Ajouter"}
-      </button>
-
-      {product && (
-        <button type="button" onClick={onCancel}>
-          Annuler
+      <div className="form-actions">
+        <button className="btn btn-primary" type="submit">
+          {product ? 'Enregistrer' : 'Ajouter'}
         </button>
-      )}
+        {product && (
+          <button className="btn btn-ghost" type="button" onClick={onCancel}>
+            Annuler
+          </button>
+        )}
+      </div>
     </form>
   );
 };

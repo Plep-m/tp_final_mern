@@ -1,8 +1,17 @@
 /**
  * Shared Types - API Responses
- * TODO: Define generic API response types
  */
 
-// TODO: Define ApiResponse<T> interface
+export interface ApiResponse<T> {
+  status: 'success' | 'error';
+  data?: T;
+  message?: string;
+  error?: string;
+}
 
-// TODO: Define PaginatedResponse<T> interface (optional)
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}

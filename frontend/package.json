@@ -4,7 +4,7 @@
   "private": true,
   "description": "React Frontend",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --force",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "predev": "cd ../shared && npm run build"

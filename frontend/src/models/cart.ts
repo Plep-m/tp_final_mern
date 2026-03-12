@@ -1,6 +1,5 @@
 /**
  * Cart Service - LocalStorage Management
- * TODO: Implement cart operations in localStorage
  */
 
 export interface CartItem {
@@ -12,28 +11,78 @@ export interface CartItem {
 export class CartService {
   static CART_KEY = 'ligue_cart';
 
-  // TODO: Implement getCart() - get cart from localStorage
   static getCart(): CartItem[] {
-    throw new Error('Not implemented');
+    try {
+      const cart = localStorage.getItem(CartService.CART_KEY);
+      return cart ? JSON.parse(cart) : [];
+    } catch (error) {
+      console.error('Error reading cart from localStorage:', error);
+      return [];
+    }
   }
 
-  // TODO: Implement addToCart() - add item to cart
   static addToCart(item: CartItem): void {
-    throw new Error('Not implemented');
+    try {
+      const cart = CartService.getCart();
+      const existingIndex = cart.findIndex(i => i.productId === item.productId);
+
+      if (existingIndex > -1) {
+        // Item exists, update quantity
+        cart[existingIndex].quantity += item.quantity;
+      } else {
+        // New item, add to cart
+        cart.push(item);
+      }
+
+      localStorage.setItem(CartService.CART_KEY, JSON.stringify(cart));
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      throw new Error('Failed to add item to cart');
+    }
   }
 
-  // TODO: Implement removeFromCart() - remove item from cart
   static removeFromCart(productId: string): void {
-    throw new Error('Not implemented');
+    try {
+      const cart = CartService.getCart();
+      const filtered = cart.filter(item => item.productId !== productId);
+      localStorage.setItem(CartService.CART_KEY, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      throw new Error('Failed to remove item from cart');
+    }
   }
 
-  // TODO: Implement clearCart() - empty cart
   static clearCart(): void {
-    throw new Error('Not implemented');
+    try {
+      localStorage.removeItem(CartService.CART_KEY);
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      throw new Error('Failed to clear cart');
+    }
   }
 
-  // TODO: Implement updateQuantity() - update item quantity
   static updateQuantity(productId: string, quantity: number): void {
-    throw new Error('Not implemented');
+    try {
+      if (quantity <= 0) {
+        CartService.removeFromCart(productId);
+        return;
+      }
+
+      const cart = CartService.getCart();
+      const item = cart.find(i => i.productId === productId);
+
+      if (item) {
+        item.quantity = quantity;
+        localStorage.setItem(CartService.CART_KEY, JSON.stringify(cart));
+      }
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+      throw new Error('Failed to update quantity');
+    }
+  }
+
+  static getCartTotal(): number {
+    const cart = CartService.getCart();
+    return cart.reduce((total, item) => total + item.quantity, 0);
   }
 }
